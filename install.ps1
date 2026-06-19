@@ -2,10 +2,34 @@ Write-Host "======================================" -ForegroundColor Cyan
 Write-Host "     🌐 NetVizör Kurulum Sihirbazı" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor Cyan
 
-if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
-    Write-Host "[!] Hata: Python bulunamadi. Lutfen indirip kurun." -ForegroundColor Red
-    Read-Host "Cikmak icin Enter tusuna basin..."
-    return
+$HasPython = [bool](Get-Command "python" -ErrorAction SilentlyContinue)
+if ($HasPython) {
+    $PyTest = python --version 2>&1
+    if ($null -eq $PyTest -or $PyTest -like "*not recognized*" -or $PyTest.Length -eq 0) {
+        $HasPython = $false
+    }
+}
+
+if (-not $HasPython) {
+    Write-Host "[*] Python bulunamadi. Python otomatik olarak indiriliyor..." -ForegroundColor Yellow
+    $Installer = "$env:TEMP\python_install.exe"
+    Invoke-WebRequest -UseBasicParsing -Uri "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" -OutFile $Installer
+    Write-Host "[+] Python arka planda kuruluyor, lutfen bekleyin..." -ForegroundColor Green
+    Start-Process -FilePath $Installer -ArgumentList "/quiet PrependPath=1" -Wait
+    Remove-Item $Installer -Force
+    
+    # PATH degiskenlerini guncelle
+    $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+    $PythonUserPath = "$env:LOCALAPPDATA\Programs\Python\Python311"
+    if (Test-Path $PythonUserPath) {
+        $env:Path += ";$PythonUserPath;$PythonUserPath\Scripts"
+    }
+    
+    if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
+        Write-Host "[!] Hata: Python kurulmaya calisildi ancak sistem yolunda (PATH) algilanamadi. Lutfen bilgisayarinizi yeniden baslatin." -ForegroundColor Red
+        Read-Host "Cikmak icin Enter tusuna basin..."
+        return
+    }
 }
 $HasGit = [bool](Get-Command "git" -ErrorAction SilentlyContinue)
 
