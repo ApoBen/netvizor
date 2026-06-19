@@ -27,13 +27,16 @@ echo -e "${GREEN}[+] Bağımlılıklar kontrol ediliyor...${NC}"
 ./venv/bin/pip install -r requirements.txt
 
 # Mod seçimi
-echo ""
-echo "NetVizör iki farklı modda çalışabilir:"
-echo "  1) Temel Mod    : Bant genişliği, süreçler ve TCP bağlantıları (Root gerekmez)"
-echo "  2) Gelişmiş Mod : Temel mod + Paket günlüğü ve DNS takibi (Sudo/Root gerektirir)"
+MODE_SELECTION=$1
 
-echo ""
-read -p "Hangi modda başlatmak istersiniz? (1/2) [Varsayılan: 1]: " MODE_SELECTION
+if [ -z "$MODE_SELECTION" ]; then
+    echo ""
+    echo "NetVizör iki farklı modda çalışabilir:"
+    echo "  1) Temel Mod    : Bant genişliği, süreçler ve TCP bağlantıları (Root gerekmez)"
+    echo "  2) Gelişmiş Mod : Temel mod + Paket günlüğü ve DNS takibi (Sudo/Root gerektirir)"
+    echo ""
+    read -t 10 -p "Hangi modda başlatmak istersiniz? (1/2) [Varsayılan: 1 (10sn içinde otomatik başlar)]: " MODE_SELECTION
+fi
 
 MODE_SELECTION=${MODE_SELECTION:-1}
 
