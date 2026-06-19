@@ -38,7 +38,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+if getattr(sys, 'frozen', False):
+    base_dir = sys._MEIPASS
+else:
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+frontend_dir = os.path.join(base_dir, "frontend")
 
 # Mount frontend static files
 if os.path.exists(frontend_dir):

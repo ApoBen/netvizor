@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=NetVizör
+Comment=Gerçek Zamanlı Ağ Trafiği İzleme & IDS
+Exec=netvizor
+Icon=utilities-system-monitor
+Type=Application
+Categories=System;Monitor;Network;
+Terminal=true
