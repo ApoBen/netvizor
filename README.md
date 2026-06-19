@@ -42,28 +42,22 @@ Linux üzerinde tüm özellikleri tam kapasiteyle kullanmak için:
   ```
   *Uygulama arka planda uvicorn sunucusunu başlatacak ve tarayıcınızda otomatik olarak `http://localhost:8765` adresini açacaktır.*
 
-### 🤖 2. Android (Termux)
-Root yetkisi olmadan da ağı izlemek üzere Termux için özel olarak optimize edilmiştir:
-1. Kurulumu yaptıktan sonra terminalinizde çalıştırın:
-   ```bash
-   netvizor
-   ```
-2. Mod seçimi sorulduğunda varsayılan olarak **1** (Temel Mod) seçeneğini seçin.
-3. Sunucu başladıktan sonra telefonunuzdaki tarayıcıyı (Chrome, Brave, Firefox vb.) açın ve şu adrese gidin:
-   ```
-   http://localhost:8765
-   ```
-   *(Android kısıtlamaları nedeniyle Termux otomatik tarayıcı açamayabilir veya süreç sahiplerini maskeleyebilir, ancak bant genişliği hız grafikleriniz ve genel akışınız sorunsuz çalışacaktır).*
+### 🤖 2. Android
+*(Geliştirme Aşamasında / Coming Soon)*
+Android platformu için tamamen yerel (Native) bir mobil uygulama geliştirme çalışmaları devam etmektedir. Şu an için mobil arayüz planlamadadır.
 
 ### 🪟 3. Windows
-Windows sistemlerde çalıştırmak için:
-1. Repoyu `.zip` olarak indirin veya git ile klonlayın:
-   ```cmd
-   git clone https://github.com/ApoBen/NetViz-r.git
-   ```
-2. Proje klasörüne girip `run.bat` dosyasına çift tıklayın. Gerekli kütüphaneleri otomatik yükleyecek ve sunucuyu başlatacaktır.
-3. Tarayıcınızdan `http://localhost:8765` adresine bağlanın.
-   *Not: Windows üzerinde Gelişmiş Paket Analizi modunu kullanabilmek için bilgisayarınızda **Npcap** (veya WinPcap) kurulu olmalıdır.*
+Windows ortamında tek komutla kurmak için PowerShell (Yönetici olarak açmanız önerilir) penceresine şu komutu kopyalayın:
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/ApoBen/NetViz-r/main/install.ps1 | iex
+```
+
+Kurulum bittikten sonra herhangi bir komut satırından arayüzü başlatabilirsiniz:
+```cmd
+netvizor
+```
+*Not: Windows üzerinde Gelişmiş Paket Analizi modunu kullanabilmek için bilgisayarınızda **Npcap** (veya WinPcap) kurulu olmalıdır.*
 
 ---
 
