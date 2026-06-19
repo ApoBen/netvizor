@@ -15,25 +15,55 @@ NetVizör, bilgisayarınızda veya cihazınızda çalışan uygulamaların ağ k
 
 ## 🚀 Hızlı Kurulum (Linux & Termux)
 
-Terminalinize tek bir satır kopyalayarak uygulamayı global olarak kurabilirsiniz:
+Terminalinize tek bir satır kopyalayarak uygulamayı global ve otomatik olarak kurabilirsiniz:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/ApoBen/NetViz-r/main/install.sh | bash
+curl -sSL "https://raw.githubusercontent.com/ApoBen/NetViz-r/main/install.sh?$(date +%s)" | bash
 ```
 
-Kurulum tamamlandıktan sonra, terminalinizin herhangi bir yerinde sadece şu komutu yazarak arayüzü açabilirsiniz:
+Kurulum tamamlandıktan sonra terminalinize sadece şunu yazarak arayüzü başlatabilirsiniz:
 ```bash
 netvizor
 ```
 
-*(Gelişmiş mod özelliklerini kullanmak istiyorsanız `sudo netvizor` yazabilirsiniz)*
+---
 
-## 🪟 Windows Kurulumu
+## 💻 Platformlara Göre Çalıştırma Kılavuzu
 
-Windows sistemlerde kullanmak için repoyu indirip klasör içindeki başlatıcıyı çalıştırın:
-1. Sağ üstten projeyi `.zip` olarak indirin veya `git clone https://github.com/ApoBen/NetViz-r.git` komutunu kullanın.
-2. Klasörün içindeki `run.bat` dosyasına çift tıklayın. Otomatik olarak kurulup açılacaktır.
-*(Gelişmiş paket analizi için Windows sisteminizde Npcap kurulu olmalıdır.)*
+### 🐧 1. Linux (Ubuntu, Debian, Arch vb.)
+Linux üzerinde tüm özellikleri tam kapasiteyle kullanmak için:
+* **Temel Mod (Root gerekmez)**:
+  ```bash
+  netvizor
+  ```
+* **Gelişmiş Mod (IDS & Paket Analizi - Root gerekir)**:
+  ```bash
+  sudo netvizor
+  ```
+  *Uygulama arka planda uvicorn sunucusunu başlatacak ve tarayıcınızda otomatik olarak `http://localhost:8765` adresini açacaktır.*
+
+### 🤖 2. Android (Termux)
+Root yetkisi olmadan da ağı izlemek üzere Termux için özel olarak optimize edilmiştir:
+1. Kurulumu yaptıktan sonra terminalinizde çalıştırın:
+   ```bash
+   netvizor
+   ```
+2. Mod seçimi sorulduğunda varsayılan olarak **1** (Temel Mod) seçeneğini seçin.
+3. Sunucu başladıktan sonra telefonunuzdaki tarayıcıyı (Chrome, Brave, Firefox vb.) açın ve şu adrese gidin:
+   ```
+   http://localhost:8765
+   ```
+   *(Android kısıtlamaları nedeniyle Termux otomatik tarayıcı açamayabilir veya süreç sahiplerini maskeleyebilir, ancak bant genişliği hız grafikleriniz ve genel akışınız sorunsuz çalışacaktır).*
+
+### 🪟 3. Windows
+Windows sistemlerde çalıştırmak için:
+1. Repoyu `.zip` olarak indirin veya git ile klonlayın:
+   ```cmd
+   git clone https://github.com/ApoBen/NetViz-r.git
+   ```
+2. Proje klasörüne girip `run.bat` dosyasına çift tıklayın. Gerekli kütüphaneleri otomatik yükleyecek ve sunucuyu başlatacaktır.
+3. Tarayıcınızdan `http://localhost:8765` adresine bağlanın.
+   *Not: Windows üzerinde Gelişmiş Paket Analizi modunu kullanabilmek için bilgisayarınızda **Npcap** (veya WinPcap) kurulu olmalıdır.*
 
 ---
 
