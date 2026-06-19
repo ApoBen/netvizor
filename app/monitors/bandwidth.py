@@ -5,12 +5,18 @@ from app.websocket_manager import manager
 from app.logger import Logger
 
 async def monitor_bandwidth(logger: Logger):
-    last_io = psutil.net_io_counters(pernic=True)
+    try:
+        last_io = psutil.net_io_counters(pernic=True)
+    except (psutil.AccessDenied, PermissionError, NotImplementedError):
+        last_io = {}
     last_time = time.time()
     
     while True:
         await asyncio.sleep(1)
-        current_io = psutil.net_io_counters(pernic=True)
+        try:
+            current_io = psutil.net_io_counters(pernic=True)
+        except (psutil.AccessDenied, PermissionError, NotImplementedError):
+            current_io = {}
         current_time = time.time()
         
         time_elapsed = current_time - last_time
