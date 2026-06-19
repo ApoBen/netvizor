@@ -7,20 +7,47 @@ if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
     Read-Host "Cikmak icin Enter tusuna basin..."
     return
 }
-if (-not (Get-Command "git" -ErrorAction SilentlyContinue)) {
-    Write-Host "[!] Hata: Git bulunamadi. Lutfen indirip kurun." -ForegroundColor Red
-    Read-Host "Cikmak icin Enter tusuna basin..."
-    return
-}
+$HasGit = [bool](Get-Command "git" -ErrorAction SilentlyContinue)
 
 $InstallDir = "$env:USERPROFILE\.netvizor"
-if (Test-Path $InstallDir) {
-    Write-Host "[+] Eski kurulum guncelleniyor..." -ForegroundColor Green
-    Set-Location $InstallDir
-    git pull origin main
+
+if ($HasGit) {
+    if (Test-Path $InstallDir) {
+        Write-Host "[+] Eski kurulum guncelleniyor (Git)..." -ForegroundColor Green
+        Set-Location $InstallDir
+        git pull origin main
+    } else {
+        Write-Host "[+] NetVizör indiriliyor (Git)..." -ForegroundColor Green
+        git clone https://github.com/ApoBen/NetViz-r.git $InstallDir
+        Set-Location $InstallDir
+    }
 } else {
-    Write-Host "[+] NetVizör indiriliyor..." -ForegroundColor Green
-    git clone https://github.com/ApoBen/NetViz-r.git $InstallDir
+    Write-Host "[*] Git bulunamadi. Proje ZIP olarak indiriliyor..." -ForegroundColor Yellow
+    
+    $ZipPath = "$env:TEMP\netvizor.zip"
+    $ExtractPath = "$env:TEMP\netvizor_extracted"
+    
+    if (Test-Path $ExtractPath) { 
+        Remove-Item -Recurse -Force $ExtractPath | Out-Null 
+    }
+    
+    Write-Host "[+] ZIP dosyasi indiriliyor..." -ForegroundColor Green
+    Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/ApoBen/NetViz-r/archive/refs/heads/main.zip" -OutFile $ZipPath
+    
+    Write-Host "[+] ZIP dosyasi ayiklaniyor..." -ForegroundColor Green
+    Expand-Archive -Path $ZipPath -DestinationPath $ExtractPath -Force
+    
+    if (-not (Test-Path $InstallDir)) { 
+        New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null 
+    }
+    
+    Write-Host "[+] Dosyalar kopyalaniyor..." -ForegroundColor Green
+    Copy-Item -Path "$ExtractPath\NetViz-r-main\*" -Destination $InstallDir -Recurse -Force
+    
+    # Temizlik
+    Remove-Item -Path $ZipPath -Force
+    Remove-Item -Recurse -Force $ExtractPath
+    
     Set-Location $InstallDir
 }
 
