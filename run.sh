@@ -28,7 +28,7 @@ fi
 
 # Bağımlılıkları yükle
 echo -e "${GREEN}[+] Bağımlılıklar kontrol ediliyor...${NC}"
-./venv/bin/pip install -r requirements.txt > /dev/null 2>&1
+./venv/bin/pip install -r requirements.txt
 
 # Mod seçimi
 echo ""
