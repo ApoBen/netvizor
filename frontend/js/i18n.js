@@ -75,32 +75,19 @@ const translations = {
     }
 };
 
-let currentLang = localStorage.getItem('netvizor_lang') || 'tr';
+let currentLang = (navigator.language || navigator.userLanguage).startsWith('tr') ? 'tr' : 'en';
 
 function applyTranslations() {
     const texts = document.querySelectorAll('[data-i18n]');
     texts.forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[currentLang][key]) {
+        if (translations[currentLang] && translations[currentLang][key]) {
             el.textContent = translations[currentLang][key];
         }
     });
 }
 
-function setLanguage(lang) {
-    if (translations[lang]) {
-        currentLang = lang;
-        localStorage.setItem('netvizor_lang', lang);
-        applyTranslations();
-    }
-}
-
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('lang-select').value = currentLang;
     applyTranslations();
-    
-    document.getElementById('lang-select').addEventListener('change', (e) => {
-        setLanguage(e.target.value);
-    });
 });
