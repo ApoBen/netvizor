@@ -19,32 +19,18 @@ fi
 # Sanal ortam oluştur/kontrol et
 if [ ! -d "venv" ]; then
     echo -e "${GREEN}[+] Sanal ortam (venv) oluşturuluyor...${NC}"
-    if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-        python3 -m venv venv --system-site-packages
-    else
-        python3 -m venv venv
-    fi
+    python3 -m venv venv
 fi
 
 # Bağımlılıkları yükle
 echo -e "${GREEN}[+] Bağımlılıklar kontrol ediliyor...${NC}"
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    grep -v "psutil" requirements.txt > termux_requirements.txt
-    ./venv/bin/pip install -r termux_requirements.txt
-    rm termux_requirements.txt
-else
-    ./venv/bin/pip install -r requirements.txt
-fi
+./venv/bin/pip install -r requirements.txt
 
 # Mod seçimi
 echo ""
 echo "NetVizör iki farklı modda çalışabilir:"
 echo "  1) Temel Mod    : Bant genişliği, süreçler ve TCP bağlantıları (Root gerekmez)"
 echo "  2) Gelişmiş Mod : Temel mod + Paket günlüğü ve DNS takibi (Sudo/Root gerektirir)"
-
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    echo -e "${RED}[!] BİLGİ: Android 10+ cihazlarda sistem kısıtlamaları nedeniyle Root olmadan bant genişliği ve aktif bağlantılar 0 görünebilir.${NC}"
-fi
 
 echo ""
 read -p "Hangi modda başlatmak istersiniz? (1/2) [Varsayılan: 1]: " MODE_SELECTION

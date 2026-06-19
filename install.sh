@@ -10,12 +10,6 @@ echo -e "${BLUE}======================================${NC}"
 echo -e "${BLUE}     🌐 NetVizör Kurulum Sihirbazı   ${NC}"
 echo -e "${BLUE}======================================${NC}"
 
-# Auto-install dependencies on Termux
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    echo -e "${GREEN}[+] Termux bağımlılıkları kontrol ediliyor / yükleniyor...${NC}"
-    pkg install git python python-psutil -y
-fi
-
 # Check for Python
 if ! command -v python3 &> /dev/null; then
     echo -e "${RED}[!] python3 bulunamadı. Lütfen yükleyin.${NC}"
@@ -42,40 +36,20 @@ fi
 
 # Create Virtual Environment
 echo -e "${GREEN}[+] Sanal ortam (venv) oluşturuluyor ve bağımlılıklar yükleniyor...${NC}"
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    python3 -m venv venv --system-site-packages
-else
-    python3 -m venv venv
-fi
+python3 -m venv venv
 ./venv/bin/pip install --upgrade pip
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    grep -v "psutil" requirements.txt > termux_requirements.txt
-    ./venv/bin/pip install -r termux_requirements.txt
-    rm termux_requirements.txt
-else
-    ./venv/bin/pip install -r requirements.txt
-fi
+./venv/bin/pip install -r requirements.txt
 
 # Setup global command 'netvizor'
 echo -e "${GREEN}[+] Global çalıştırıcı (netvizor) ayarlanıyor...${NC}"
 
-if [ -d "/data/data/com.termux" ] || [ -n "$TERMUX_VERSION" ]; then
-    # Termux Environment
-    if [ -n "$PREFIX" ]; then
-        BIN_DIR="$PREFIX/bin"
-    else
-        BIN_DIR="/data/data/com.termux/files/usr/bin"
-    fi
-    SUDO_CMD=""
+# Standard Linux Environment
+BIN_DIR="/usr/local/bin"
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${RED}[!] /usr/local/bin dizinine yazmak için sudo yetkisi gerekiyor. Lütfen şifrenizi girin:${NC}"
+    SUDO_CMD="sudo "
 else
-    # Standard Linux Environment
-    BIN_DIR="/usr/local/bin"
-    if [ "$EUID" -ne 0 ]; then
-        echo -e "${RED}[!] /usr/local/bin dizinine yazmak için sudo yetkisi gerekiyor. Lütfen şifrenizi girin:${NC}"
-        SUDO_CMD="sudo "
-    else
-        SUDO_CMD=""
-    fi
+    SUDO_CMD=""
 fi
 
 # Create the wrapper script
