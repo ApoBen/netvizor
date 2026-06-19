@@ -350,6 +350,127 @@ tbody tr:hover {
     }
 }
 
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .sidebar .logo h2 {
+        text-align: center;
+        font-size: 20px;
+    }
+    
+    .status-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .status-indicator {
+        margin-bottom: 0;
+    }
+    
+    .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .controls h3 {
+        grid-column: span 2;
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+    
+    .btn {
+        margin-bottom: 0;
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .settings {
+        grid-column: span 2;
+        margin-top: 4px;
+    }
+    
+    .interfaces-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .interfaces-list h3 {
+        width: 100%;
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+    
+    .dashboard {
+        padding: 16px;
+        overflow-y: visible;
+    }
+    
+    header .header-stats {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .stat-box {
+        padding: 16px;
+    }
+    
+    .stat-box .value {
+        font-size: 24px;
+    }
+    
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .card {
+        padding: 16px;
+    }
+    
+    .chart-wrapper {
+        height: 220px;
+    }
+    
+    .table-wrapper {
+        max-height: 250px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 500px;
+    }
+
+    .toast-container {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+    }
+
+    .toast {
+        width: 100%;
+    }
+}
+
 /* Toast Notifications */
 .toast-container {
     position: fixed;
