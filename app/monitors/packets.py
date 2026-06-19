@@ -85,4 +85,7 @@ async def monitor_packets(logger: Logger):
             await asyncio.sleep(2)
             
     except asyncio.CancelledError:
-        sniffer.stop()
+        try:
+            sniffer.stop()
+        except Exception:
+            pass

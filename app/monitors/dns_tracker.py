@@ -62,4 +62,7 @@ async def monitor_dns(logger: Logger):
             await asyncio.sleep(3) # Update every 3 seconds
             
     except asyncio.CancelledError:
-        sniffer.stop()
+        try:
+            sniffer.stop()
+        except Exception:
+            pass
