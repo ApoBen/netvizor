@@ -1,69 +1,109 @@
 #!/usr/bin/env bash
 # NetVizör Global Installer
+# Kullanım: bash <(curl -fsSL https://raw.githubusercontent.com/ApoBen/netvizor/main/install.sh)
+
+set -e
 
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}======================================${NC}"
 echo -e "${BLUE}     🌐 NetVizör Kurulum Sihirbazı   ${NC}"
 echo -e "${BLUE}======================================${NC}"
+echo ""
 
-# Check for Python
+# Python kontrolü
 if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}[!] python3 bulunamadı. Lütfen yükleyin.${NC}"
+    echo -e "${RED}[!] python3 bulunamadı. Lütfen yükleyin: sudo apt install python3${NC}"
     exit 1
 fi
 
-# Check for Git
-if ! command -v git &> /dev/null; then
-    echo -e "${RED}[!] git bulunamadı. Lütfen yükleyin.${NC}"
-    exit 1
-fi
-
-# Clone directory
 INSTALL_DIR="$HOME/.netvizor"
-if [ -d "$INSTALL_DIR" ]; then
-    echo -e "${GREEN}[+] Eski kurulum güncelleniyor...${NC}"
-    cd "$INSTALL_DIR"
-    git pull origin main
+
+# İndirme: Git varsa clone/pull, yoksa ZIP ile indir
+if command -v git &> /dev/null; then
+    if [ -d "$INSTALL_DIR/.git" ]; then
+        echo -e "${GREEN}[+] Mevcut kurulum güncelleniyor (git pull)...${NC}"
+        git -C "$INSTALL_DIR" pull origin main
+    else
+        echo -e "${GREEN}[+] NetVizör indiriliyor (git clone)...${NC}"
+        git clone https://github.com/ApoBen/netvizor.git "$INSTALL_DIR"
+    fi
 else
-    echo -e "${GREEN}[+] NetVizör indiriliyor...${NC}"
-    git clone https://github.com/ApoBen/netvizor.git "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    echo -e "${YELLOW}[!] Git bulunamadı. ZIP arşivi ile indiriliyor...${NC}"
+    if command -v curl &> /dev/null; then
+        curl -fsSL https://github.com/ApoBen/netvizor/archive/refs/heads/main.zip -o /tmp/netvizor.zip
+    elif command -v wget &> /dev/null; then
+        wget -q https://github.com/ApoBen/netvizor/archive/refs/heads/main.zip -O /tmp/netvizor.zip
+    else
+        echo -e "${RED}[!] curl veya wget bulunamadı. Lütfen birini yükleyin.${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}[+] Arşiv açılıyor...${NC}"
+    rm -rf /tmp/netvizor-main "$INSTALL_DIR"
+    unzip -q /tmp/netvizor.zip -d /tmp/
+    mv /tmp/netvizor-main "$INSTALL_DIR"
+    rm -f /tmp/netvizor.zip
 fi
 
-# Create Virtual Environment
-echo -e "${GREEN}[+] Sanal ortam (venv) oluşturuluyor ve bağımlılıklar yükleniyor...${NC}"
+cd "$INSTALL_DIR"
+
+# Sanal ortam ve bağımlılıklar
+echo -e "${GREEN}[+] Sanal ortam oluşturuluyor ve bağımlılıklar yükleniyor...${NC}"
 python3 -m venv venv
-./venv/bin/pip install --upgrade pip
-./venv/bin/pip install -r requirements.txt
+./venv/bin/pip install --upgrade pip --quiet
+./venv/bin/pip install -r requirements.txt --quiet
 
-# Setup global command 'netvizor'
-echo -e "${GREEN}[+] Global çalıştırıcı (netvizor) ayarlanıyor...${NC}"
+# 'netvizor' komutunu kur
+echo -e "${GREEN}[+] 'netvizor' komutu kurulumu yapılıyor...${NC}"
 
-# Standard Linux Environment
-BIN_DIR="/usr/local/bin"
-if [ "$EUID" -ne 0 ]; then
-    echo -e "${RED}[!] /usr/local/bin dizinine yazmak için sudo yetkisi gerekiyor. Lütfen şifrenizi girin:${NC}"
-    SUDO_CMD="sudo "
-else
-    SUDO_CMD=""
-fi
-
-# Create the wrapper script
-WRAPPER_SCRIPT="#!/usr/bin/env bash
+WRAPPER_CONTENT="#!/usr/bin/env bash
+# NetVizör Başlatıcı
 cd \"$INSTALL_DIR\"
-./run.sh \"\$@\"
+exec ./run.sh \"\$@\"
 "
 
-echo "$WRAPPER_SCRIPT" > "$INSTALL_DIR/netvizor_wrapper"
-$SUDO_CMD mv "$INSTALL_DIR/netvizor_wrapper" "$BIN_DIR/netvizor"
-$SUDO_CMD chmod +x "$BIN_DIR/netvizor"
+# Önce kullanıcı dizinine koy (sudo gerektirmez)
+LOCAL_BIN="$HOME/.local/bin"
+mkdir -p "$LOCAL_BIN"
+echo "$WRAPPER_CONTENT" > "$LOCAL_BIN/netvizor"
+chmod +x "$LOCAL_BIN/netvizor"
 
-echo -e "${GREEN}[+] Kurulum başarıyla tamamlandı! 🎉${NC}"
-echo -e "Eğer ${RED}netvizor: command not found${NC} hatası alırsanız:"
-echo -e "  1. Terminali kapatıp tekrar açın veya ${BLUE}hash -r${NC} (zsh kullanıyorsanız ${BLUE}rehash${NC}) komutunu çalıştırın."
-echo -e "  2. PATH değişkeninizde ${BLUE}$BIN_DIR${NC} klasörünün ekli olduğundan emin olun."
-echo -e "Artık terminalinize sadece ${BLUE}netvizor${NC} yazarak uygulamayı başlatabilirsiniz."
+# /usr/local/bin'e de koy (sudo varsa)
+if sudo -n true 2>/dev/null; then
+    echo "$WRAPPER_CONTENT" | sudo tee /usr/local/bin/netvizor > /dev/null
+    sudo chmod +x /usr/local/bin/netvizor
+    echo -e "${GREEN}[+] /usr/local/bin/netvizor kuruldu (sistem geneli).${NC}"
+else
+    echo -e "${YELLOW}[!] Sistem geneli kurulum için sudo gerekli, atlanıyor.${NC}"
+    echo -e "${GREEN}[+] $LOCAL_BIN/netvizor kuruldu (sadece bu kullanıcı).${NC}"
+fi
+
+# PATH kontrolü ve .bashrc/.zshrc güncelleme
+add_to_path() {
+    local SHELL_RC="$1"
+    if [ -f "$SHELL_RC" ] && ! grep -q 'HOME/.local/bin' "$SHELL_RC"; then
+        echo '' >> "$SHELL_RC"
+        echo '# NetVizör - kullanıcı bin dizini' >> "$SHELL_RC"
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$SHELL_RC"
+        echo -e "${GREEN}[+] PATH güncellendi: $SHELL_RC${NC}"
+    fi
+}
+
+add_to_path "$HOME/.bashrc"
+add_to_path "$HOME/.zshrc"
+
+# Mevcut shell'e de uygula
+export PATH="$HOME/.local/bin:$PATH"
+
+echo ""
+echo -e "${GREEN}✅ Kurulum tamamlandı!${NC}"
+echo ""
+echo -e "  Terminale ${BLUE}netvizor${NC} yazarak uygulamayı başlatabilirsiniz."
+echo -e "  Değişikliklerin geçerli olması için terminali yeniden başlatın veya:"
+echo -e "    ${YELLOW}source ~/.bashrc${NC}  (bash kullanıyorsanız)"
+echo -e "    ${YELLOW}source ~/.zshrc${NC}   (zsh kullanıyorsanız)"
+echo ""
