@@ -114,10 +114,24 @@ async def startup_event():
     
     # Start advanced monitors if root
     if IS_ROOT:
-        from app.monitors.packets import monitor_packets
-        from app.monitors.dns_tracker import monitor_dns
-        asyncio.create_task(monitor_packets(global_logger))
-        asyncio.create_task(monitor_dns(global_logger))
-        print("Running in ADVANCED mode (Root). All monitors active.")
+        has_raw_sockets = True
+        try:
+            import socket
+            if os.name == 'posix':
+                s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0003))
+                s.close()
+        except Exception as e:
+            has_raw_sockets = False
+            print(f"Uyari: Root yetkisi var ancak ham soket (raw socket) izni yok. ({e})")
+            print("Termux veya kisitli bir ortamda olabilirsiniz.")
+            
+        if has_raw_sockets:
+            from app.monitors.packets import monitor_packets
+            from app.monitors.dns_tracker import monitor_dns
+            asyncio.create_task(monitor_packets(global_logger))
+            asyncio.create_task(monitor_dns(global_logger))
+            print("Running in ADVANCED mode (Root). All monitors active.")
+        else:
+            print("Running in BASIC mode (Root, but no raw socket permission). Packet and DNS capture disabled.")
     else:
         print("Running in BASIC mode (Non-Root). Packet and DNS capture disabled.")
