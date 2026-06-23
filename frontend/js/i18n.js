@@ -43,7 +43,11 @@ const translations = {
         btn_settings: "Ayarlar",
         settings_title: "⚙️ Ayarlar",
         setting_sql_title: "Veritabanı (SQLite) Kaydı",
-        setting_sql_desc: "Ağ verilerini ve geçmişi kalıcı olarak netvizor.db dosyasına kaydeder. Uzun süreli kullanımlarda dosya boyutu büyüyebilir."
+        setting_sql_desc: "Ağ verilerini ve geçmişi kalıcı olarak kaydeder.",
+        tab_system: "Sistem & Veritabanı",
+        tab_ui: "Arayüz & Görünüm",
+        setting_layout_title: "Kart Görünürlüğü",
+        setting_layout_desc: "Ekranda görmek istemediğiniz panelleri gizleyebilirsiniz."
     },
     en: {
         status_connecting: "Connecting...",
@@ -78,7 +82,7 @@ const translations = {
         th_src: "Source",
         th_dst: "Destination",
         th_size: "Size",
-        msg_export_success: "Log exported!",
+        msg_export_success: "Export saved!",
         msg_export_error: "Export error",
         root_required: "Root Required",
         toast_success: "Success",
@@ -88,7 +92,11 @@ const translations = {
         btn_settings: "Settings",
         settings_title: "⚙️ Settings",
         setting_sql_title: "Database (SQLite) Logging",
-        setting_sql_desc: "Permanently records network data and history to netvizor.db file. File size may grow significantly over time."
+        setting_sql_desc: "Permanently records network data and history.",
+        tab_system: "System & Database",
+        tab_ui: "UI & Appearance",
+        setting_layout_title: "Card Visibility",
+        setting_layout_desc: "Hide panels you do not want to see on the screen."
     }
 };
 

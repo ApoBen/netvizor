@@ -81,7 +81,7 @@
 
             <div class="grid-container">
                 <!-- Bandwidth Chart -->
-                <div class="card chart-card wide">
+                <div id="card-bandwidth" class="card chart-card wide">
                     <h3 data-i18n="bandwidth_chart">Bant Genişliği</h3>
                     <div class="chart-wrapper">
                         <canvas id="bandwidthChart"></canvas>
@@ -89,7 +89,7 @@
                 </div>
 
                 <!-- Process Table -->
-                <div class="card table-card">
+                <div id="card-processes" class="card table-card">
                     <h3 data-i18n="process_usage">Süreç Bazlı Kullanım</h3>
                     <div class="table-wrapper">
                         <table id="process-table">
@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- Protocol Chart (Advanced Only) -->
-                <div class="card chart-card advanced-feature">
+                <div id="card-protocols" class="card chart-card advanced-feature">
                     <h3 data-i18n="protocol_dist">Protokol Dağılımı</h3>
                     <div class="chart-wrapper pie-wrapper">
                         <canvas id="protocolChart"></canvas>
@@ -120,7 +120,7 @@
                 </div>
 
                 <!-- Connections Table -->
-                <div class="card table-card">
+                <div id="card-connections" class="card table-card">
                     <h3 data-i18n="live_connections">Canlı Bağlantılar</h3>
                     <div class="table-wrapper">
                         <table id="connections-table">
@@ -140,7 +140,7 @@
                 </div>
 
                 <!-- Packet Log (Advanced Only) -->
-                <div class="card table-card wide advanced-feature">
+                <div id="card-packets" class="card table-card wide advanced-feature">
                     <h3 data-i18n="packet_log">Paket Günlüğü</h3>
                     <div class="table-wrapper">
                         <table id="packet-table">
@@ -175,16 +175,70 @@
                 <h3 data-i18n="settings_title">⚙️ Ayarlar</h3>
                 <span class="close-modal" id="close-settings">&times;</span>
             </div>
+            
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="tab-system" data-i18n="tab_system">Sistem & Veritabanı</button>
+                <button class="tab-btn" data-tab="tab-ui" data-i18n="tab_ui">Arayüz & Görünüm</button>
+            </div>
+
             <div class="modal-body">
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <strong data-i18n="setting_sql_title">Veritabanı (SQLite) Kaydı</strong>
-                        <p data-i18n="setting_sql_desc" class="setting-desc">Ağ verilerini ve geçmişi kalıcı olarak netvizor.db dosyasına kaydeder. Uzun süreli kullanımlarda dosya boyutu büyüyebilir.</p>
+                <!-- System & Database Tab -->
+                <div id="tab-system" class="tab-content active">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong data-i18n="setting_sql_title">Veritabanı (SQLite) Kaydı</strong>
+                            <p data-i18n="setting_sql_desc" class="setting-desc">Ağ verilerini ve geçmişi kalıcı olarak kaydeder.</p>
+                            <p class="setting-path">📁 <span id="db-path-display">Yükleniyor...</span></p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-sql">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="toggle-sql">
-                        <span class="slider"></span>
-                    </label>
+                </div>
+
+                <!-- UI & Appearance Tab -->
+                <div id="tab-ui" class="tab-content">
+                    <h4 data-i18n="setting_layout_title" style="margin-top: 0;">Kart Görünürlüğü</h4>
+                    <p data-i18n="setting_layout_desc" class="setting-desc" style="margin-bottom: 15px;">Ekranda görmek istemediğiniz panelleri gizleyebilirsiniz.</p>
+                    
+                    <div class="visibility-list">
+                        <div class="visibility-item">
+                            <span data-i18n="bandwidth_chart">Bant Genişliği</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" class="toggle-card" data-card="bandwidth">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="visibility-item">
+                            <span data-i18n="process_usage">Süreç Bazlı Kullanım</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" class="toggle-card" data-card="processes">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="visibility-item">
+                            <span data-i18n="protocol_dist">Protokol Dağılımı</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" class="toggle-card" data-card="protocols">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="visibility-item">
+                            <span data-i18n="live_connections">Canlı Bağlantılar</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" class="toggle-card" data-card="connections">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="visibility-item">
+                            <span data-i18n="packet_log">Paket Günlüğü</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" class="toggle-card" data-card="packets">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -238,6 +238,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsModal = document.getElementById('settings-modal');
     const closeSettings = document.getElementById('close-settings');
     const toggleSql = document.getElementById('toggle-sql');
+    const dbPathDisplay = document.getElementById('db-path-display');
+    
+    // Tab Switching Logic
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+
+    // UI Preferences (Card Visibility)
+    const loadUIPreferences = () => {
+        const defaultVisibility = {
+            bandwidth: true,
+            processes: true,
+            protocols: true,
+            connections: true,
+            packets: true
+        };
+        const prefs = JSON.parse(localStorage.getItem('netvizor_ui_prefs')) || defaultVisibility;
+        
+        document.querySelectorAll('.toggle-card').forEach(toggle => {
+            const cardId = toggle.dataset.card;
+            const isVisible = prefs[cardId] !== false;
+            
+            toggle.checked = isVisible;
+            const cardEl = document.getElementById(`card-${cardId}`);
+            if (cardEl) {
+                cardEl.style.display = isVisible ? '' : 'none';
+            }
+        });
+    };
+
+    // Save UI Preferences
+    const saveUIPreferences = () => {
+        const prefs = {};
+        document.querySelectorAll('.toggle-card').forEach(toggle => {
+            prefs[toggle.dataset.card] = toggle.checked;
+            const cardEl = document.getElementById(`card-${toggle.dataset.card}`);
+            if (cardEl) {
+                cardEl.style.display = toggle.checked ? '' : 'none';
+            }
+        });
+        localStorage.setItem('netvizor_ui_prefs', JSON.stringify(prefs));
+    };
+
+    // Initialize UI Toggles
+    document.querySelectorAll('.toggle-card').forEach(toggle => {
+        toggle.addEventListener('change', saveUIPreferences);
+    });
+
+    loadUIPreferences();
     
     if(btnSettings && settingsModal) {
         btnSettings.addEventListener('click', () => {
@@ -247,6 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     toggleSql.checked = data.sql_enabled;
+                    if(dbPathDisplay && data.db_path) {
+                        dbPathDisplay.textContent = data.db_path;
+                    }
                 })
                 .catch(err => console.error("Error fetching settings:", err));
         });
@@ -261,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Handle Toggle Switch
+        // Handle SQL Toggle Switch
         toggleSql.addEventListener('change', (e) => {
             const isEnabled = e.target.checked;
             fetch('/api/settings/sql', {

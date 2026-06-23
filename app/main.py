@@ -85,11 +85,15 @@ async def clear_data():
     return {"status": "cleared"}
 
 from pydantic import BaseModel
+from app.database import db_manager
 
 @app.get("/api/settings")
 async def get_settings():
+    import os
+    abs_db_path = os.path.abspath(db_manager.db_path)
     return {
-        "sql_enabled": getattr(global_logger, "sql_enabled", False)
+        "sql_enabled": getattr(global_logger, "sql_enabled", False),
+        "db_path": abs_db_path
     }
 
 class SqlSettingRequest(BaseModel):

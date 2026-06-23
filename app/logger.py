@@ -5,11 +5,12 @@ from datetime import datetime
 from typing import List, Dict
 import asyncio
 from app.database import db_manager
+from app.config import config_manager
 
 class Logger:
     def __init__(self):
         self.is_paused = False
-        self.sql_enabled = False
+        self.sql_enabled = config_manager.get("sql_enabled", False)
         self.recorded_data: Dict[str, List] = {
             "bandwidth": [],
             "connections": [],
@@ -26,6 +27,7 @@ class Logger:
 
     def toggle_sql(self, state: bool):
         self.sql_enabled = state
+        config_manager.set("sql_enabled", state)
 
     def pause(self):
         self.is_paused = True
